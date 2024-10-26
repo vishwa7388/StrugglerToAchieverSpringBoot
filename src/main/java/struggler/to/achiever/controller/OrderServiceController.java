@@ -1,6 +1,6 @@
 package struggler.to.achiever.controller;
 
-public class orderController {
+public class OrderServiceController {
 
   public String testingApi(){
 
