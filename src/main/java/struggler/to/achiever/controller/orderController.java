@@ -4,6 +4,6 @@ public class orderController {
 
   public String testingApi(){
 
-    return "hello";
+    return "hi";
   }
 }
