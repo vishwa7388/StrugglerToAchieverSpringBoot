@@ -2,7 +2,7 @@ package struggler.to.achiever.controller;
 
 public class orderController {
 
-  public String testingApi{
+  public String testingApi(){
 
     return null;
   }
