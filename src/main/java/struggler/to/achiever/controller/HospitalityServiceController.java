@@ -1,4 +1,4 @@
 package struggler.to.achiever.controller;
 
-public class productController {
+public class HospitalityServiceController {
 }
