@@ -1,41 +1,29 @@
-package struggler.to.achiever.model;
+package struggler.to.achiever.dto;
 
-import jakarta.persistence.*;
 
 import java.util.List;
 
-@Entity
-@Table(name = "user")
-public class UserEntity {
+public class UserDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "name")
     private String name;
-
-    @Column(name = "dob")
     private String dob;
-
-    @Column(name = "usercount")
     private int userCount;
-
-    @Column(name = "phonenumber")
     private long phoneNumber;
-
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<RoomEntity> roomEntity;
-
-    @Column(name = "roomcount")
+    private List<RoomDto> roomDto;
     private int roomCount;
 
-    @Version
-    @Column(name = "version")
-    private Long version;
+    public UserDto() {
+    }
 
-    public UserEntity() {
+    public UserDto(Long id, String name, String dob, int userCount, long phoneNumber, List<RoomDto> roomEntity, int roomCount) {
+        this.id = id;
+        this.name = name;
+        this.dob = dob;
+        this.userCount = userCount;
+        this.phoneNumber = phoneNumber;
+        this.roomDto = roomDto;
+        this.roomCount = roomCount;
     }
 
     public Long getId() {
@@ -78,12 +66,12 @@ public class UserEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<RoomEntity> getRoomEntity() {
-        return roomEntity;
+    public List<RoomDto> getRoomDto() {
+        return roomDto;
     }
 
-    public void setRoomEntity(List<RoomEntity> roomEntity) {
-        this.roomEntity = roomEntity;
+    public void setRoomDto(List<RoomDto> roomDto) {
+        this.roomDto = roomDto;
     }
 
     public int getRoomCount() {
@@ -92,13 +80,5 @@ public class UserEntity {
 
     public void setRoomCount(int roomCount) {
         this.roomCount = roomCount;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
     }
 }
