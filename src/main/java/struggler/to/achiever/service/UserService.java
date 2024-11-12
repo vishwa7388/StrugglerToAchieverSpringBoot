@@ -3,61 +3,63 @@ package struggler.to.achiever.service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-import struggler.to.achiever.dto.RoomDto;
 import struggler.to.achiever.dto.UserDto;
-import struggler.to.achiever.model.RoomEntity;
 import struggler.to.achiever.model.UserEntity;
-import struggler.to.achiever.repository.RoomRepository;
 import struggler.to.achiever.repository.UserRepository;
+import struggler.to.achiever.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
 
     @Autowired
-    RoomRepository roomRepository;
+    Utils utils;
+
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
     public List<UserDto> getAllUsers(){
         List<UserEntity> userEntityList = userRepository.findAll();
-        List<UserDto> userDtoList = new ArrayList<>();
 
-        for (UserEntity userEntity: userEntityList){
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(userEntity,userDto);
-            List<RoomDto> roomDtoList = new ArrayList<>();
-            for(RoomEntity roomEntity : userEntity.getRoomEntity()){
-                RoomDto roomDto = new RoomDto();
-                BeanUtils.copyProperties(roomEntity,roomDto);
-                roomDto.setUserId(userEntity.getId());
-                roomDtoList.add(roomDto);
-            }
-            userDto.setRoomDto(roomDtoList);
-            userDtoList.add(userDto);
-        }
-       return userDtoList;
+        List<UserDto> userLoginDtos = new ArrayList<>();
+        userEntityList.stream().forEach(x -> {
+            UserDto userLoginDto =  new UserDto();
+            BeanUtils.copyProperties(x,userLoginDto);
+            userLoginDtos.add(userLoginDto);
+        });
+
+        return userLoginDtos;
     }
 
     @Transactional
-    public void createUser(UserDto userDto) {
-        UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(userDto,userEntity);
-        List<RoomEntity> roomEntities = new ArrayList<>();
-        for(RoomDto room : userDto.getRoomDto()){
-            RoomEntity roomEntity = new RoomEntity();
-            BeanUtils.copyProperties(room,roomEntity);
-            roomEntity.setUserEntity(userEntity);
-            roomEntities.add(roomEntity);
-        }
-        userEntity.setRoomEntity(roomEntities);
-        userRepository.save(userEntity);
+    public void createUser(UserDto userLoginDto){
+        UserEntity userLoginEntity = new UserEntity();
+        BeanUtils.copyProperties(userLoginDto,userLoginEntity);
 
+        String publicUserId = utils.generateUserId(30);
+        userLoginEntity.setUser_id(publicUserId);
+        userLoginEntity.setEncrypted_password(bCryptPasswordEncoder.encode(userLoginDto.getPassword()));
+        userRepository.save(userLoginEntity);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return new User(username,user.getEncrypted_password(),new ArrayList<>()); // Return the User entity as UserDetails
     }
 }

@@ -1,29 +1,20 @@
 package struggler.to.achiever.dto;
 
-
-import java.util.List;
-
 public class UserDto {
 
     private Long id;
-    private String name;
-    private String dob;
-    private int userCount;
-    private long phoneNumber;
-    private List<RoomDto> roomDto;
-    private int roomCount;
+    private String username;
+    private String password;
+    private String email;
 
     public UserDto() {
     }
 
-    public UserDto(Long id, String name, String dob, int userCount, long phoneNumber, List<RoomDto> roomEntity, int roomCount) {
+    public UserDto(Long id, String username, String password, String email) {
         this.id = id;
-        this.name = name;
-        this.dob = dob;
-        this.userCount = userCount;
-        this.phoneNumber = phoneNumber;
-        this.roomDto = roomDto;
-        this.roomCount = roomCount;
+        this.username = username;
+        this.password = password;
+        this.email = email;
     }
 
     public Long getId() {
@@ -34,51 +25,27 @@ public class UserDto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getDob() {
-        return dob;
+    public String getPassword() {
+        return password;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public int getUserCount() {
-        return userCount;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserCount(int userCount) {
-        this.userCount = userCount;
-    }
-
-    public long getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
-    public List<RoomDto> getRoomDto() {
-        return roomDto;
-    }
-
-    public void setRoomDto(List<RoomDto> roomDto) {
-        this.roomDto = roomDto;
-    }
-
-    public int getRoomCount() {
-        return roomCount;
-    }
-
-    public void setRoomCount(int roomCount) {
-        this.roomCount = roomCount;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

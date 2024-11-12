@@ -17,8 +17,8 @@ public class RoomEntity {
     @Column(name = "status")
     String status;
     @ManyToOne(fetch = FetchType.LAZY)  // Many rooms to one user
-    @JoinColumn(name = "user_id")  // FK column in the room table
-    private UserEntity userEntity;
+    @JoinColumn(name = "customer_id")  // FK column in the room table
+    private CustomerEntity customerEntity;
 
     @Version
     @Column(name = "version")
@@ -59,12 +59,12 @@ public class RoomEntity {
         this.status = status;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public CustomerEntity getCustomerEntity() {
+        return customerEntity;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setCustomerEntity(CustomerEntity customerEntity) {
+        this.customerEntity = customerEntity;
     }
 
     public Long getVersion() {

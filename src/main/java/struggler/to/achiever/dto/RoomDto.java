@@ -5,17 +5,17 @@ public class RoomDto {
     String roomType;
     double roomPrice;
     String status;
-    Long userId;
+    Long customerId;
 
     public RoomDto() {
     }
 
-    public RoomDto(Long id, String roomType, double roomPrice, String status ,Long userId) {
+    public RoomDto(Long id, String roomType, double roomPrice, String status ,Long customerId) {
         this.id = id;
         this.roomType = roomType;
         this.roomPrice = roomPrice;
         this.status = status;
-        this.userId = userId;
+        this.customerId = customerId;
     }
 
     public Long getId() {
@@ -50,11 +50,11 @@ public class RoomDto {
         this.status = status;
     }
 
-    public Long getUserId() {
-        return userId;
+    public Long getCustomerId() {
+        return customerId;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
     }
 }

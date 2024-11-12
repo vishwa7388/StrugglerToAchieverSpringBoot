@@ -2,41 +2,20 @@ package struggler.to.achiever.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "user")
 public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "dob")
-    private String dob;
-
-    @Column(name = "usercount")
-    private int userCount;
-
-    @Column(name = "phonenumber")
-    private long phoneNumber;
-
-    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<RoomEntity> roomEntity;
-
-    @Column(name = "roomcount")
-    private int roomCount;
-
-    @Version
-    @Column(name = "version")
-    private Long version;
-
-    public UserEntity() {
-    }
+    private String username;
+    private String password;
+    private String email;
+    private String encrypted_password;
+    private String email_verification_token;
+    private String email_verification_status;
+    private String user_id;
 
     public Long getId() {
         return id;
@@ -46,59 +25,59 @@ public class UserEntity {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getEmail() {
+        return email;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public String getDob() {
-        return dob;
+    public String getPassword() {
+        return password;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
-    public int getUserCount() {
-        return userCount;
+    public String getEncrypted_password() {
+        return encrypted_password;
     }
 
-    public void setUserCount(int userCount) {
-        this.userCount = userCount;
+    public void setEncrypted_password(String encrypted_password) {
+        this.encrypted_password = encrypted_password;
     }
 
-    public long getPhoneNumber() {
-        return phoneNumber;
+    public String getEmail_verification_token() {
+        return email_verification_token;
     }
 
-    public void setPhoneNumber(long phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setEmail_verification_token(String email_verification_token) {
+        this.email_verification_token = email_verification_token;
     }
 
-    public List<RoomEntity> getRoomEntity() {
-        return roomEntity;
+    public String getEmail_verification_status() {
+        return email_verification_status;
     }
 
-    public void setRoomEntity(List<RoomEntity> roomEntity) {
-        this.roomEntity = roomEntity;
+    public void setEmail_verification_status(String email_verification_status) {
+        this.email_verification_status = email_verification_status;
     }
 
-    public int getRoomCount() {
-        return roomCount;
+    public String getUser_id() {
+        return user_id;
     }
 
-    public void setRoomCount(int roomCount) {
-        this.roomCount = roomCount;
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
     }
 
-    public Long getVersion() {
-        return version;
+    public String getUsername() {
+        return username;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

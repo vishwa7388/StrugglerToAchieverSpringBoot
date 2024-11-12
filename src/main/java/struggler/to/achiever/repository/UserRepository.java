@@ -5,7 +5,7 @@ import org.springframework.stereotype.Repository;
 import struggler.to.achiever.model.UserEntity;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity,Long>{
-    //Note:
-   //JPA repository is basically combination of CurdRepository and Pagingandsortingrepository.
+public interface UserRepository extends JpaRepository<UserEntity,Long> {
+
+    UserEntity findByUsername(String username);  // Query method to find user by username
 }
