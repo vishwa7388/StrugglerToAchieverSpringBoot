@@ -28,15 +28,27 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+    private UserDto returnValue;
+
+    public UserDto getUser(String email) {
+        UserEntity user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new UsernameNotFoundException(email);
+        }
+        UserDto returnValue = new UserDto();
+        returnValue.setUserId(user.getUser_id());
+        BeanUtils.copyProperties(user, returnValue);
+        return returnValue;
+    }
 
     @Transactional
-    public List<UserDto> getAllUsers(){
+    public List<UserDto> getAllUsers() {
         List<UserEntity> userEntityList = userRepository.findAll();
 
         List<UserDto> userLoginDtos = new ArrayList<>();
         userEntityList.stream().forEach(x -> {
-            UserDto userLoginDto =  new UserDto();
-            BeanUtils.copyProperties(x,userLoginDto);
+            UserDto userLoginDto = new UserDto();
+            BeanUtils.copyProperties(x, userLoginDto);
             userLoginDtos.add(userLoginDto);
         });
 
@@ -44,9 +56,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void createUser(UserDto userLoginDto){
+    public void createUser(UserDto userLoginDto) {
         UserEntity userLoginEntity = new UserEntity();
-        BeanUtils.copyProperties(userLoginDto,userLoginEntity);
+        BeanUtils.copyProperties(userLoginDto, userLoginEntity);
 
         String publicUserId = utils.generateUserId(30);
         userLoginEntity.setUser_id(publicUserId);
@@ -56,10 +68,10 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = userRepository.findByUsername(username);
+        UserEntity user = userRepository.findByEmail(username);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new User(username,user.getEncrypted_password(),new ArrayList<>()); // Return the User entity as UserDetails
+        return new User(username, user.getEncrypted_password(), new ArrayList<>()); // Return the User entity as UserDetails
     }
 }

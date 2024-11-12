@@ -7,5 +7,5 @@ import struggler.to.achiever.model.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity,Long> {
 
-    UserEntity findByUsername(String username);  // Query method to find user by username
+    UserEntity findByEmail(String email);  // Query method to find user by username
 }

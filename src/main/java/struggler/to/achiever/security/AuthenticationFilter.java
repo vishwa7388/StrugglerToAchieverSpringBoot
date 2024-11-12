@@ -1,4 +1,4 @@
-package struggler.to.achiever.configuration;
+package struggler.to.achiever.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
@@ -14,7 +14,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import struggler.to.achiever.constant.SecurityConstants;
+import struggler.to.achiever.dto.UserDto;
 import struggler.to.achiever.model.UserLoginRequestModel;
+import struggler.to.achiever.service.UserService;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -26,15 +28,17 @@ import java.util.Date;
 
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+
     public AuthenticationFilter(AuthenticationManager authenticationManager){
         super(authenticationManager);
+
     }
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try{
             UserLoginRequestModel creds = new ObjectMapper().readValue(request.getInputStream(),UserLoginRequestModel.class);
-            return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(creds.getUsername(),creds.getPassword(),new ArrayList<>()));
+            return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(creds.getEmail(),creds.getPassword(),new ArrayList<>()));
         }catch(IOException e){
             throw new RuntimeException();
         }
@@ -48,19 +52,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
 
         byte[] secretKeyBytes = Base64.getEncoder().encode(SecurityConstants.TOKEN_SECRET.getBytes());
-        SecretKey secretKey = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS512.getJcaName());
+        SecretKey secretKey = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS256.getJcaName());
         Instant now= Instant.now();
-
-        // Get the authenticated user details (you can extract other information if needed)
         String username = ((User)authResult.getPrincipal()).getUsername();  // The authenticated username
-
-        // Generate a JWT token
         String token = generateToken(secretKey,username);
 
-        // Add the token to the HTTP response headers
+        UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+        UserDto userDto = userService.getUser(username);
         response.addHeader("Authorization", "Bearer " + token);
-
-        // Optionally, add any other logic here (e.g., logging, etc.)
+        if (userDto != null) {
+            response.addHeader("UserId", userDto.getUserId().toString());
+        } else {
+            response.addHeader("UserId", "unknown");
+        }
     }
 
     // Helper method to generate JWT
@@ -69,8 +73,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + SecurityConstants.EXPIRATION_TIME))
-                .signWith(SignatureAlgorithm.HS256, secretKey)  // Use your secret key
-                .compact();  // Return the token
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
 
     }
 }

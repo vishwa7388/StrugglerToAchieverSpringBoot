@@ -16,13 +16,13 @@ public class CustomerServiceController {
 
     @GetMapping("getAllCustomers")
     List<CustomerDto> getAllCustomer(){
-        List<CustomerDto> userEntityList= userService.getAllUsers();
-        return userEntityList;
+        List<CustomerDto> customerEntityList= userService.getAllCustomers();
+        return customerEntityList;
     }
 
    @PostMapping("create/customer")
-    public String createCustomer(@RequestBody CustomerDto userDto){
-         userService.createUser(userDto);
+    public String createCustomer(@RequestBody CustomerDto customerDto){
+         userService.createCustomer(customerDto);
          return "Successfully Created";
     }
 }

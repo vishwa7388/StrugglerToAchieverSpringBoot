@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
 import struggler.to.achiever.dto.RoomDto;
 import struggler.to.achiever.dto.CustomerDto;
 import struggler.to.achiever.model.RoomEntity;
@@ -19,14 +18,14 @@ import java.util.List;
 public class CustomerService {
 
     @Autowired
-    CustomerRepository userRepository;
+    CustomerRepository customerRepository;
 
     @Autowired
     RoomRepository roomRepository;
 
     @Transactional
-    public List<CustomerDto> getAllUsers(){
-        List<CustomerEntity> userEntityList = userRepository.findAll();
+    public List<CustomerDto> getAllCustomers(){
+        List<CustomerEntity> userEntityList = customerRepository.findAll();
         List<CustomerDto> userDtoList = new ArrayList<>();
 
         for (CustomerEntity userEntity: userEntityList){
@@ -46,7 +45,7 @@ public class CustomerService {
     }
 
     @Transactional
-    public void createUser(CustomerDto userDto) {
+    public void createCustomer(CustomerDto userDto) {
         CustomerEntity customerEntity = new CustomerEntity();
         BeanUtils.copyProperties(userDto,customerEntity);
         List<RoomEntity> roomEntities = new ArrayList<>();
@@ -57,7 +56,7 @@ public class CustomerService {
             roomEntities.add(roomEntity);
         }
         customerEntity.setRoomEntity(roomEntities);
-        userRepository.save(customerEntity);
+        customerRepository.save(customerEntity);
 
     }
 }
