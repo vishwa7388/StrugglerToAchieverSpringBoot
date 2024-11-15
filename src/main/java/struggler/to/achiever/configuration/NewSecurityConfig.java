@@ -1,4 +1,3 @@
-/*
 package struggler.to.achiever.configuration;
 
 import org.springframework.context.annotation.Bean;
@@ -19,12 +18,12 @@ import struggler.to.achiever.security.AuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig{
+public class NewSecurityConfig{
 
     private final UserService userDetailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public SecurityConfig(UserService userDetailService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public NewSecurityConfig(UserService userDetailService, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.userDetailService = userDetailService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
@@ -58,4 +57,4 @@ public class SecurityConfig{
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();  // Hash passwords with BCrypt
     }
-}*/
+}
