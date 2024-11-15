@@ -15,7 +15,8 @@ public class UserEntity {
     private String encrypted_password;
     private String email_verification_token;
     private String email_verification_status;
-    private String user_id;
+    @Column(name = "userId")
+    private String userId;
 
     public Long getId() {
         return id;
@@ -65,12 +66,12 @@ public class UserEntity {
         this.email_verification_status = email_verification_status;
     }
 
-    public String getUser_id() {
-        return user_id;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser_id(String user_id) {
-        this.user_id = user_id;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {
