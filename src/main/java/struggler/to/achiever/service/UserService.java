@@ -59,6 +59,10 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public UserResponse createUser(UserDto userLoginDto) {
+        if (userLoginDto == null) {
+            System.out.println("UserDto is null");
+            throw new UserServiceException("UserDto cannot be null");
+        }
         if (userLoginDto.getUsername() == null || userLoginDto.getUsername().isEmpty()) {
             throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
         }
@@ -72,7 +76,11 @@ public class UserService implements UserDetailsService {
         response.setUsername(userLoginDto.getUsername());
         response.setPassword(userLoginDto.getPassword());
         userRepository.save(userLoginEntity);
-        return response;
+        try {
+            return response;
+        } catch (Exception ex) {
+            throw new UserServiceException("Failed to create user");
+        }
     }
 
     @Override

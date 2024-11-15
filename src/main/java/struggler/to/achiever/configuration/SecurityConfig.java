@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import struggler.to.achiever.constant.SecurityConstants;
+import struggler.to.achiever.security.AuthenticationFilter;
+import struggler.to.achiever.security.AuthorizationFilter;
 import struggler.to.achiever.service.UserService;
 
 @Configuration
@@ -33,12 +35,13 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         // Create Authentication Filter
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager);
+       AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/create/token");
 
         http.csrf().disable()
                 .authorizeRequests()
                 .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()  // Allow sign up
+                .requestMatchers("/error").permitAll()
                 .anyRequest().authenticated()  // All other requests require authentication
                 .and()
                 .authenticationManager(authenticationManager)

@@ -1,6 +1,7 @@
 package struggler.to.achiever.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -48,15 +49,18 @@ public class UserController {
     }*/
 
     @PostMapping("/user")
-    public ResponseEntity<?> createUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<UserResponse> createUser(@RequestBody UserDto user) {
         try {
-            // Create user in the service layer
-            UserResponse userResponse = userService.createUser(userDto);
-
-            return ResponseEntity.ok(userResponse);  // Respond with 200 OK if the user is created successfully
+            // Assuming the service throws a UserServiceException if something goes wrong
+            UserResponse createdUser = userService.createUser(user);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         } catch (UserServiceException ex) {
-            // If validation fails or any exception occurs, it will be caught here and passed to GlobalExceptionHandler
-            throw ex;
+            // If the UserServiceException is thrown, it will be caught here
+            // This should be caught by the GlobalExceptionHandler, but you can handle here as well
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (Exception ex) {
+            // Catch any other exceptions and let the GlobalExceptionHandler handle it
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
