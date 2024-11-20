@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import struggler.to.achiever.constant.SecurityConstants;
 import struggler.to.achiever.dto.UserDto;
-import struggler.to.achiever.model.UserLoginRequestModel;
+import struggler.to.achiever.dto.UserLoginRequestModel;
 import struggler.to.achiever.service.UserService;
 
 import javax.crypto.SecretKey;

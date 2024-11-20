@@ -1,23 +1,46 @@
 package struggler.to.achiever.response;
 
+import java.util.Date;
+
 public class ErrorResponse {
-    private int statusCode;
+
+    private Date timestamp;
+    private int status;
+    private String error;
     private String message;
-    private String details;
 
-    public ErrorResponse(int statusCode, String message, String details) {
-        this.statusCode = statusCode;
+    public ErrorResponse() {
+    }
+
+    public ErrorResponse(Date timestamp, int status, String error, String message) {
+        this.timestamp = timestamp;
+        this.status = status;
+        this.error = error;
         this.message = message;
-        this.details = details;
     }
 
-    // Getters and Setters
-    public int getStatusCode() {
-        return statusCode;
+    public Date getTimestamp() {
+        return timestamp;
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     public String getMessage() {
@@ -26,13 +49,5 @@ public class ErrorResponse {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getDetails() {
-        return details;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
     }
 }

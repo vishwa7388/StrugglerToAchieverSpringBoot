@@ -1,4 +1,4 @@
-package struggler.to.achiever.model;
+package struggler.to.achiever.dto;
 
 public class UserLoginRequestModel {
     private String email;

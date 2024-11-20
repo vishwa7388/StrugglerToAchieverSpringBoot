@@ -1,17 +1,13 @@
 package struggler.to.achiever.exceptions;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.WebRequest;
 import struggler.to.achiever.response.ErrorResponse;
 
-import javax.naming.AuthenticationException;
+import java.util.Date;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -19,14 +15,14 @@ public class GlobalExceptionHandler {
     // Handle UserServiceException and return a custom error message
     @ExceptionHandler(UserServiceException.class)
     public ResponseEntity<Object> handleUserServiceException(UserServiceException ex) {
-        // Log the exception to verify it's being caught
-        System.out.println("Handling UserServiceException: " + ex.getMessage());
-
         // Create a custom error response
+       // ErrorMessage errorMessage = new ErrorMessage(new Date(),ex.getMessage());
+
         ErrorResponse errorResponse = new ErrorResponse(
+                new Date(),
                 HttpStatus.BAD_REQUEST.value(),
-                ex.getMessage(),
-                "UserServiceException"
+                "BAD_REQUEST",
+                ex.getMessage()
         );
 
         // Return the response as JSON
@@ -38,9 +34,23 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleGlobalException(Exception ex) {
         System.out.println("Handling Global Exception: " + ex.getMessage());
         ErrorResponse errorResponse = new ErrorResponse(
+                new Date(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "An unexpected error occurred.",
-                "GlobalException"
+                ex.getMessage()
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    // Handle other exceptions globally
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Object> handleUserNotFoundException(Exception ex) {
+        System.out.println("Handling User Not found Exception: " + ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                new Date(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                "No user found.", "User Not Found for given id : " +
+                ex.getMessage()
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

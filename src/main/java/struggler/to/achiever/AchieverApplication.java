@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import struggler.to.achiever.security.SpringApplicationContext;
 
 @SpringBootApplication
-@ComponentScan({"struggler.to.achiever.controller","struggler.to.achiever.service","struggler.to.achiever.util","struggler.to.achiever.configuration","struggler.to.achiever.security"})
+@ComponentScan({"struggler.to.achiever.controller","struggler.to.achiever.service","struggler.to.achiever.util","struggler.to.achiever.configuration","struggler.to.achiever.security","struggler.to.achiever.exceptions"})
 @EntityScan("struggler.to.achiever.model")
 @EnableJpaRepositories("struggler.to.achiever.repository")
 public class AchieverApplication {

@@ -9,11 +9,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import struggler.to.achiever.dto.UserDetailRequestModel;
 import struggler.to.achiever.dto.UserDto;
 import struggler.to.achiever.exceptions.UserServiceException;
 import struggler.to.achiever.model.UserEntity;
 import struggler.to.achiever.repository.UserRepository;
 import struggler.to.achiever.response.ErrorMessages;
+import struggler.to.achiever.response.OperationStatus;
+import struggler.to.achiever.response.OperationStatusResponse;
 import struggler.to.achiever.response.UserResponse;
 import struggler.to.achiever.util.Utils;
 
@@ -48,12 +51,13 @@ public class UserService implements UserDetailsService {
         List<UserEntity> userEntityList = userRepository.findAll();
 
         List<UserDto> userLoginDtos = new ArrayList<>();
-        userEntityList.stream().forEach(x -> {
-            UserDto userLoginDto = new UserDto();
-            BeanUtils.copyProperties(x, userLoginDto);
-            userLoginDtos.add(userLoginDto);
-        });
-
+        if(null != userEntityList) {
+            userEntityList.stream().forEach(x -> {
+                UserDto userLoginDto = new UserDto();
+                BeanUtils.copyProperties(x, userLoginDto);
+                userLoginDtos.add(userLoginDto);
+            });
+        }
         return userLoginDtos;
     }
 
@@ -80,6 +84,53 @@ public class UserService implements UserDetailsService {
             return response;
         } catch (Exception ex) {
             throw new UserServiceException("Failed to create user");
+        }
+    }
+
+    @Transactional
+    public UserResponse updateUser(String id , UserDetailRequestModel userDetailRequestModel) {
+        if (userDetailRequestModel == null) {
+            System.out.println("userDetailRequestModel is null");
+            throw new UserServiceException("userDetailRequestModel cannot be null");
+        }
+        if (userDetailRequestModel.getId() == null || userDetailRequestModel.getId().isEmpty()) {
+            throw new UserServiceException(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+        }
+        UserResponse response = new UserResponse();
+        UserEntity userEntity = userRepository.findByUserId(id);
+
+        if(null != userEntity)
+        {
+            userEntity.setUsername(userDetailRequestModel.getUsername());
+            userEntity.setPassword(userDetailRequestModel.getPassword());
+            userEntity.setEncrypted_password(bCryptPasswordEncoder.encode(userDetailRequestModel.getPassword()));
+            userEntity.setEmail(userDetailRequestModel.getEmail());
+        }
+        response.setUsername(userEntity.getUsername());
+        response.setPassword(userEntity.getPassword());
+        userRepository.save(userEntity);
+        try {
+            return response;
+        } catch (Exception ex) {
+            throw new UserServiceException("Failed to update user");
+        }
+    }
+
+    @Transactional
+    public OperationStatusResponse deleteUser(String id) {
+        UserEntity userEntity = userRepository.findByUserId(id);
+
+        if (userEntity == null) {
+            throw new UserServiceException(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+        }
+        userRepository.delete(userEntity);
+        OperationStatusResponse operationStatusResponse = new OperationStatusResponse();
+        operationStatusResponse.setOperationName(OperationStatus.DELETE.getStatus());
+        operationStatusResponse.setOperationResult(OperationStatus.DELETED.getStatus());
+        try {
+            return operationStatusResponse;
+        } catch (Exception ex) {
+            throw new UserServiceException("Failed to delete user");
         }
     }
 
