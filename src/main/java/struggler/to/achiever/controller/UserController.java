@@ -1,5 +1,7 @@
 package struggler.to.achiever.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/userservice")
+@Tag(name = "User Controller", description = "To implement spring security and manage roles and permissions this controller is designed.")
 public class UserController {
 
     @Autowired
@@ -24,6 +27,7 @@ public class UserController {
 
 
     @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @Operation(summary = "Get User By Id", description = "Returns User details based on user id.")
     public UserDto getUsers(@PathVariable String id) {
         UserDto userDto = userService.getUserByUserId(id);
         System.out.println("UserId :" + id);
@@ -33,9 +37,16 @@ public class UserController {
     }
 
     @GetMapping("/getAll")
+    @Operation(summary = "Get All User", description = "Returns All User details.")
     public List<UserDto> getAllUsers() {
         List<UserDto> userEntityList = userService.getAllUsers();
         return userEntityList;
+    }
+
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE})
+    public List<UserDto> getUsers(@RequestParam(value = "page",defaultValue = "0") int page, @RequestParam(value = "limit",defaultValue = "25") int limit) {
+        List<UserDto> userDtoList = userService.getUsers(page,limit);
+        return userDtoList;
     }
 
     @PostMapping("/create")

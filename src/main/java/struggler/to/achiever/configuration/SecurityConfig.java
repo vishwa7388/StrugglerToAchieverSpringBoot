@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()  // Allow sign up
                 .requestMatchers("/error").permitAll()
+                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                 .anyRequest().authenticated()  // All other requests require authentication
                 .and()
                 .authenticationManager(authenticationManager)

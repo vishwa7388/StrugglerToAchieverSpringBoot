@@ -3,6 +3,9 @@ package struggler.to.achiever.service;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +17,7 @@ import struggler.to.achiever.dto.UserDto;
 import struggler.to.achiever.exceptions.UserServiceException;
 import struggler.to.achiever.model.UserEntity;
 import struggler.to.achiever.repository.UserRepository;
+import struggler.to.achiever.repository.UserRepositoryForPagingAndSorting;
 import struggler.to.achiever.response.ErrorMessages;
 import struggler.to.achiever.response.OperationStatus;
 import struggler.to.achiever.response.OperationStatusResponse;
@@ -28,6 +32,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    UserRepositoryForPagingAndSorting userRepositoryForPagingAndSorting;
 
     @Autowired
     Utils utils;
@@ -59,6 +66,25 @@ public class UserService implements UserDetailsService {
             });
         }
         return userLoginDtos;
+    }
+
+    @Transactional
+    public List<UserDto> getUsers(int page,int limit) {
+        List<UserDto> userDtos = new ArrayList<>();
+
+        Pageable pageableRequest = PageRequest.of(page,limit);
+
+        Page<UserEntity> userPage = userRepository.findAll(pageableRequest);
+
+        List<UserEntity> userEntities = userPage.getContent();
+
+        userEntities.stream().forEach(userEntity -> {
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(userEntity,userDto);
+            userDtos.add(userDto);
+        });
+
+        return userDtos;
     }
 
     @Transactional
