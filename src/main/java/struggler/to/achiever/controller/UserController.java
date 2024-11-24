@@ -26,7 +26,7 @@ public class UserController {
     UserService userService;
 
 
-    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    @GetMapping(path = "/user/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Operation(summary = "Get User By Id", description = "Returns User details based on user id.")
     public UserDto getUsers(@PathVariable String id) {
         UserDto userDto = userService.getUserByUserId(id);
@@ -56,7 +56,7 @@ public class UserController {
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @PutMapping(path="/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE},
+    @PutMapping(path="/user/{id}" , consumes = {MediaType.APPLICATION_JSON_VALUE},
     produces = {MediaType.APPLICATION_JSON_VALUE})
     public UserResponse updateUser(@PathVariable String id,@RequestBody UserDetailRequestModel userDetailRequestModel){
         UserResponse updatedUser = userService.updateUser(id,userDetailRequestModel);
@@ -64,7 +64,7 @@ public class UserController {
         return updatedUser;
     }
 
-    @DeleteMapping(path="/{id}")
+    @DeleteMapping(path="/user/{id}")
     public OperationStatusResponse deleteUser(@PathVariable String id){
         OperationStatusResponse deleteUser = userService.deleteUser(id);
         System.out.println("delete called");

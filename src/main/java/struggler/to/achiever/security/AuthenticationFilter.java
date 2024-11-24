@@ -7,11 +7,14 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import struggler.to.achiever.constant.SecurityConstants;
 import struggler.to.achiever.dto.UserDto;
@@ -37,6 +40,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try{
+            System.out.println("Attempt Authenticatiopn called");
             UserLoginRequestModel creds = new ObjectMapper().readValue(request.getInputStream(),UserLoginRequestModel.class);
             return getAuthenticationManager().authenticate(new UsernamePasswordAuthenticationToken(creds.getEmail(),creds.getPassword(),new ArrayList<>()));
         }catch(IOException e){
@@ -50,15 +54,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                                             FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
 
-
+System.out.println("Successful Authenticatiopn called");
         byte[] secretKeyBytes = Base64.getEncoder().encode(SecurityConstants.TOKEN_SECRET.getBytes());
         SecretKey secretKey = new SecretKeySpec(secretKeyBytes, SignatureAlgorithm.HS256.getJcaName());
         Instant now= Instant.now();
-        String username = ((User)authResult.getPrincipal()).getUsername();  // The authenticated username
-        String token = generateToken(secretKey,username);
 
+        String username = ((UserPrincipal)authResult.getPrincipal()).getUsername();  // The authenticated username
+        System.out.println("Username : " + username);
+        String token = generateToken(secretKey,username);
+        System.out.println("Token : " + token);
         UserService userService = (UserService) SpringApplicationContext.getBean("userService");
+        System.out.println("heloooooooooooo");
+
         UserDto userDto = userService.getUser(username);
+        System.out.println("Email from userDTO: " + userDto.getEmail());
         response.addHeader("Authorization", "Bearer " + token);
         if (userDto != null) {
             response.addHeader("UserId", userDto.getUserId().toString());
@@ -76,5 +85,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
 
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();  // Use BCryptPasswordEncoder
     }
 }

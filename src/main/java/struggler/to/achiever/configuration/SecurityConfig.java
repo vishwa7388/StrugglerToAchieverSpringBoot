@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import struggler.to.achiever.constant.SecurityConstants;
+import struggler.to.achiever.repository.UserRepository;
 import struggler.to.achiever.security.AuthenticationFilter;
 import struggler.to.achiever.security.AuthorizationFilter;
 import struggler.to.achiever.service.UserService;
@@ -22,10 +23,13 @@ public class SecurityConfig {
 
     private final UserService userDetailService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final UserRepository userRepository;
 
-    public SecurityConfig(UserService userDetailService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+
+    public SecurityConfig(UserService userDetailService, BCryptPasswordEncoder bCryptPasswordEncoder, UserRepository userRepository) {
         this.userDetailService = userDetailService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userRepository = userRepository;
     }
 
     @Bean
@@ -35,7 +39,7 @@ public class SecurityConfig {
         AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 
         // Create Authentication Filter
-       AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(authenticationManager);
         authenticationFilter.setFilterProcessesUrl("/create/token");
 
         http.csrf().disable()
@@ -43,16 +47,19 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()  // Allow sign up
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/userservice/user/**").hasRole("ADMIN")
                 .anyRequest().authenticated()  // All other requests require authentication
                 .and()
                 .authenticationManager(authenticationManager)
                 .addFilter(authenticationFilter) // Add AuthenticationFilter first
-                .addFilter(new AuthorizationFilter(authenticationManager)) // Add AuthorizationFilter after AuthenticationFilter and before UsernamePasswordAuthenticationFilter
+                .addFilter(new AuthorizationFilter(authenticationManager,userRepository)) // Add AuthorizationFilter after AuthenticationFilter
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // No sessions
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS); // Stateless authentication (no sessions)
 
-        return http.build();
+        return http.build();  // Return the configured SecurityFilterChain
     }
+
+
 
     // Password Encoder (BCrypt)
     @Bean

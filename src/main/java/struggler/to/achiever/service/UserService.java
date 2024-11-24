@@ -22,6 +22,7 @@ import struggler.to.achiever.response.ErrorMessages;
 import struggler.to.achiever.response.OperationStatus;
 import struggler.to.achiever.response.OperationStatusResponse;
 import struggler.to.achiever.response.UserResponse;
+import struggler.to.achiever.security.UserPrincipal;
 import struggler.to.achiever.util.Utils;
 
 import java.util.ArrayList;
@@ -43,13 +44,17 @@ public class UserService implements UserDetailsService {
     BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public UserDto getUser(String email) {
+        System.out.println("Get User Called first: " + email);
         UserEntity user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException(email);
         }
+        System.out.println("Get User Called second: " + email);
+
         UserDto returnValue = new UserDto();
         returnValue.setUserId(user.getUserId());
         BeanUtils.copyProperties(user, returnValue);
+        System.out.println("Value Returned: " + returnValue);
         return returnValue;
     }
 
@@ -103,6 +108,7 @@ public class UserService implements UserDetailsService {
         String publicUserId = utils.generateUserId(30);
         userLoginEntity.setUserId(publicUserId);
         userLoginEntity.setEncrypted_password(bCryptPasswordEncoder.encode(userLoginDto.getPassword()));
+        userLoginEntity.setEmail_verification_status(true);
         response.setUsername(userLoginDto.getUsername());
         response.setPassword(userLoginDto.getPassword());
         userRepository.save(userLoginEntity);
@@ -166,7 +172,8 @@ public class UserService implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return new User(username, user.getEncrypted_password(), new ArrayList<>()); // Return the User entity as UserDetails
+       // return new User(username, user.getEncrypted_password(), new ArrayList<>()); // Return the User entity as UserDetails
+    return new UserPrincipal(user);
     }
 
     public UserDto getUserByUserId(String userId) {

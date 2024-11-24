@@ -10,16 +10,21 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import struggler.to.achiever.constant.SecurityConstants;
+import struggler.to.achiever.model.UserEntity;
+import struggler.to.achiever.repository.UserRepository;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Base64;
 
 public class AuthorizationFilter extends BasicAuthenticationFilter {
-    public AuthorizationFilter(AuthenticationManager authenticationManager) {
+
+    private final UserRepository userRepository;
+
+    public AuthorizationFilter(AuthenticationManager authenticationManager, UserRepository userRepository) {
         super(authenticationManager);
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -62,7 +67,10 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
             if (subject == null) {
                 return null;
             }
-            return new UsernamePasswordAuthenticationToken(subject, null, new ArrayList<>());
+            UserEntity userEntity = userRepository.findByEmail(subject);
+            UserPrincipal userPrincipal = new UserPrincipal(userEntity);
+
+            return new UsernamePasswordAuthenticationToken(subject, null, userPrincipal.getAuthorities());
         } catch (JwtException | IllegalArgumentException e) {
             // If token is invalid, log the error and return null (not authenticated)
             return null;
