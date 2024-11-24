@@ -68,9 +68,13 @@ public class AuthorizationFilter extends BasicAuthenticationFilter {
                 return null;
             }
             UserEntity userEntity = userRepository.findByEmail(subject);
+
+            if(userEntity == null){
+                return null;
+            }
             UserPrincipal userPrincipal = new UserPrincipal(userEntity);
 
-            return new UsernamePasswordAuthenticationToken(subject, null, userPrincipal.getAuthorities());
+            return new UsernamePasswordAuthenticationToken(userPrincipal, null, userPrincipal.getAuthorities());
         } catch (JwtException | IllegalArgumentException e) {
             // If token is invalid, log the error and return null (not authenticated)
             return null;

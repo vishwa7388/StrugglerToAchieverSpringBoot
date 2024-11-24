@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import struggler.to.achiever.dto.UserDetailRequestModel;
 import struggler.to.achiever.dto.UserDto;
@@ -25,7 +27,7 @@ public class UserController {
     @Autowired
     UserService userService;
 
-
+    @PostAuthorize("returnObject.userId == principal.userId")
     @GetMapping(path = "/user/{id}", produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     @Operation(summary = "Get User By Id", description = "Returns User details based on user id.")
     public UserDto getUsers(@PathVariable String id) {
@@ -64,7 +66,9 @@ public class UserController {
         return updatedUser;
     }
 
-    @DeleteMapping(path="/user/{id}")
+   @PreAuthorize("hasAuthority('DELETE_AUTHORITY') or #id == principal.userId")
+   //@PreAuthorize("hasAuthority('DELETE_AUTHORITY')")
+   @DeleteMapping(path="/user/{id}")
     public OperationStatusResponse deleteUser(@PathVariable String id){
         OperationStatusResponse deleteUser = userService.deleteUser(id);
         System.out.println("delete called");

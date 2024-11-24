@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,6 +20,7 @@ import struggler.to.achiever.security.AuthorizationFilter;
 import struggler.to.achiever.service.UserService;
 
 @Configuration
+@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig {
 
@@ -47,7 +50,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, SecurityConstants.SIGN_UP_URL).permitAll()  // Allow sign up
                 .requestMatchers("/error").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/userservice/user/**").hasRole("ADMIN")
+                //.requestMatchers(HttpMethod.DELETE, "/api/userservice/user/**").hasRole("ADMIN")
                 .anyRequest().authenticated()  // All other requests require authentication
                 .and()
                 .authenticationManager(authenticationManager)
